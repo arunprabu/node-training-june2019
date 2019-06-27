@@ -22,7 +22,7 @@ eventEmitter.on("ON_FILE_WRITTEN", function() {
 });
 
 //writing file in the name of output.txt 
-fs.writeFile('./arun.txt', data, function(err) {
+fs.writeFile('./arun.txt', data, (err) => {
   if(!err){
     console.log("File written successfully");
     

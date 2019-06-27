@@ -8,25 +8,25 @@ function getTemplate( pageName ) {
   return  `
   <!DOCTYPE html>
   <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>${pageName}</title>
-  </head>
-  <body>
-    <nav>
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/faq">FAQ</a></li>
-        <li><a href="/any">Any</a></li>
-      <ul>
-    </nav>
-    <div>
-      <h1>${pageName}</h1>
-    </div>
-  </body>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>${pageName}</title>
+    </head>
+    <body>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/faq">FAQ</a></li>
+          <li><a href="/any">Any</a></li>
+        <ul>
+      </nav>
+      <div>
+        <h1>${pageName}</h1>
+      </div>
+    </body>
   </html>`
 }
 
@@ -42,7 +42,7 @@ var httpServer = http.createServer( (req, res) => {
   //algo:
   //1. understand the url --> req.url
   //2. understanding the http method - GET, POST, PUT, PATCH, DELETE (CRUD)
-  //3. construct the right template and send
+  //3. construct the right template and send the res
   console.log(req.url, req.method);
   
   res.writeHead(200, {"Content-Type": "text/html"});
@@ -69,8 +69,27 @@ var httpServer = http.createServer( (req, res) => {
         //send the res
         res.write(getTemplate("Any Page"));
     }
+  }else if(req.method == 'POST'){
+    console.log(req.url);
+    const current_url = new URL('http://localhost:3000/?name=arun&email=a@e.com');
+    const search_params = current_url.searchParams;
+
+    // "name" parameter
+    if(search_params){
+      var username = search_params.get('name');
+      var email = search_params.get('email');
+      console.log(username, email);
+    }
+    
+    res.write(`
+      <div>
+        <h1>Welcome ${username}, </h1>
+        <h4>Your EMail is: ${email}</h4>
+      </div>
+    `)
+    
   }else{
-    //if the http req method is not GET 
+    //if the http req method is not GET or POST
     res.write(`
       <h1>${req.method} method is not supported</h1>
     `);
