@@ -1,35 +1,50 @@
 var express = require('express');
 var router = express.Router();
+
+var contactService = require('../services/contactService');
+
 //for api http://localhost:3000/api/contacts
 
 /* GET req for listing down all contacts api end point. */
 router.get('/', function(req, res, next) {
-  res.json(
-    [
-      { id:1, fullName: "Arun", phoneNo: 1244323, email: 'a@example.com'},
-      { id:2, fullName: "John", phoneNo: 3453245, email: 'j@example.com'},
-      { id:3, fullName: "Peter", phoneNo: 3242234, email: 'peter@example.com'}
-    ]
-  );
+  contactService.getContacts(function (err, data) {
+    if (!err) {
+      //4. send it back as JSON
+      res.json(data);
+    } else {
+      res.json(err);
+    }
+  })
 });
 
 // POST req for creating contact 
 router.post('/', function(req, res, next) {
-  console.log(req.body);
-  res.json({
-    id: 4,
-    fullName: req.body.fullName,
-    email: req.body.email,
-    phoneNo: req.body.phoneNo,
-    status: 'Saved Successfully!'
-  });
+
+  // methods, req obj  -- ok 
+  contactService.createContact(req.body, function(err, data) {
+    if(!err){
+      res.json(data);
+    }else{
+      res.json(err);
+    }
+  })
 });
 
 //GET req for fetching one contact 
 router.get('/:id', function(req, res, next) {
-  res.json(
-    { id: req.params.id, fullName: "Arun", phoneNo: 1244323, email: 'a@example.com'}
-  );
+  console.log(`Requested contactId is ${req.params.id}`);
+  contactService.getContactById(req.params.id, function(err, data){
+    if (!err) {
+      if(data){
+        //4. send it back as JSON
+        res.json(data);
+      }else{
+        res.json({ status: 'Unable to find contact with Contact Id: ' + req.params.id })
+      }
+    } else {
+      res.json(err);
+    }
+  })
 });
 
 //PUT req for updating one contact
