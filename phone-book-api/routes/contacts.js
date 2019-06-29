@@ -30,7 +30,18 @@ router.post('/', function(req, res, next) {
   })
 });
 
-//GET req for fetching one contact 
+//static url should take higher precedence over the dynamic
+router.get('/search', function(req, res, next){
+  console.log(req.params);
+
+  // reading query params --http://localhost:3000/api/contacts/search?fullName=arun 
+  console.log(req.query);  //fullName with value will be inside this obj
+  res.json({
+    searchResults: "Search is not implemented yet"
+  });
+});
+
+//GET req for fetching one contact -- catching url parameters
 router.get('/:id', function(req, res, next) {
   console.log(`Requested contactId is ${req.params.id}`);
   contactService.getContactById(req.params.id, function(err, data){
@@ -51,23 +62,27 @@ router.get('/:id', function(req, res, next) {
 router.put('/:id', function(req, res, next) {
   console.log("Inside Put Req");
   console.log(req.body);
+  var contactId = req.params.id;  // what contactId we have to update 
+  var updatableContact = req.body;  //with what data we have to update 
 
-  res.json(
-    {
-      id: req.params.id,
-      fullName: req.body.fullName,
-      email: req.body.email,
-      phoneNo: req.body.phoneNo,
-      status: 'Updated Successfully!'
+  //send the req to services 
+  contactService.updateContact(contactId, updatableContact, function(err, data){ 
+    //receive data from the services
+    if (!err) {
+      //send it back as JSON
+      res.json(data);
+    } else {
+      res.json(err);
     }
-  )
+  });
 });
 
 router.delete('/:id', function(req, res, next) {
   console.log("Inside Delete Request");
   res.json( {
     status: "Deleted Successfully!"
-  })
+  });
 });
+
 
 module.exports = router;

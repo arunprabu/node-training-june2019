@@ -40,5 +40,20 @@ exports.getContactById = function( _contactId, callback){
 } 
 
 //UpdateContact
+exports.updateContact = function( _contactId, newContactData, callback) {
+  console.log(_contactId);
+  console.log(newContactData);
+
+  //1. construct the query and exec query 
+  Contact.updateOne({ contactId: _contactId}, newContactData, function(err, data) {
+    //2. get the data from db 
+    if(!err){
+      console.log("updated successfully");
+    }
+
+    //3. send it back to routes 
+    callback(err, data);
+  });
+}
 
 //DeleteContact 
